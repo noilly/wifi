@@ -131,15 +131,18 @@ def normalize(cell_block):
                 if 'Unknown' in value:
                     continue
 
-                # consume remaining block
-                values = [value]
-                while lines and lines[0].startswith(' ' * 4):
-                    values.append(lines.pop(0).strip())
-
                 if 'WPA2' in value:
                     cell.encryption_type = 'wpa2'
                 elif 'WPA' in value:
                     cell.encryption_type = 'wpa'
+                    
+            if key == 'groupcipher':
+                cell.group_cipher = value
+            elif 'pairwiseciphers' in key:
+                cell.pairwise_ciphers = value.split()
+            elif 'authenticationsuites' in key:
+                cell.authentication_suites = value.split()
+                
             if key == 'frequency':
                 matches = frequency_re.search(value)
                 cell.frequency = matches.group('frequency')
